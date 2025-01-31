@@ -1,23 +1,38 @@
-from opa_wasm import OPAPolicy
+import boto3
 import json
+from opa_wasm import OPAPolicy
 
-# Load a policy by specifying its file path
-policy = OPAPolicy('policy.wasm')
+def lambda_handler(event, context):
+    try:
+        s3 = boto3.client('s3')
 
+        # Fetch and load the policy (assuming it's a wasm binary)
+        policy_object = s3.get_object(Bucket='gdms-poc-toolkit', Key='policy.wasm')
+        policy_data = policy_object['Body'].read()
+        policy = OPAPolicy(policy_data)
 
-data_file = open('data.json')
-data = json.load(data_file)
+        # Fetch and load data.json
+        data_object = s3.get_object(Bucket='gdms-poc-toolkit', Key='data.json')
+        data = json.load(data_object['Body'])
 
-# Optional: Set policy data
-policy.set_data(data)
+        # Optional: Set policy data
+        policy.set_data(data)
 
-# load the input
-input_file = open('input_object.json')
-input = json.load(input_file)
+        # Fetch and load input_object.json
+        input_object = s3.get_object(Bucket='gdms-poc-toolkit', Key='input_object.json')
+        input_data = json.load(input_object['Body'])
 
+        # Evaluate the policy
+        result = policy.evaluate(input_data)
 
-# Evaluate the policy
-result = policy.evaluate(input)
+        return {
+            'statusCode': 200,
+            'body': json.dumps(result)  # Ensure the result is returned as a JSON string
+        }
 
-# [{'result': {'rule': 'C', 'label': 'UNRESTRICTED'}}]
-print(result)
+    except Exception as e:
+        print(f"Error fetching file from S3: {e}")
+        return {
+            'statusCode': 500,
+            'body': "Error processing the request"
+        }
