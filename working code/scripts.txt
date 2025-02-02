@@ -42,6 +42,9 @@ pip install wasmer -t .
 pip install wasmer_compiler_cranelift -t .
 pip install wasmer_compiler_llvm -t .
 pip install opa_wasm -t .
+aws s3 cp s3://gdms-poc-toolkit1/input_object.json .
+aws s3 cp s3://gdms-poc-toolkit1/data.json .
+aws s3 cp s3://gdms-poc-toolkit1/policy.wasm .
 zip -r ../lambda_opa_py_package.zip .
 cd .. 
 chmod +x lambda_opa_py_package.zip
@@ -49,4 +52,4 @@ aws s3 cp lambda_opa_py_package.zip s3://BUCKET_NAME
 
 Script to build .wasm file from .rego ruleset:
 
-opa build -t wasm -e test/main policy.rego
+opa build -t wasm -e test/main policy.rego -o policy.tar.gz
