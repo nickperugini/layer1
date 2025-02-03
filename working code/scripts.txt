@@ -4,8 +4,8 @@ mkdir lambda_opa_py_package
 cd lambda_opa_py_package/
 vi lambda_function.py
 ESC :set paste 
-#so that no extra spaces are added when pasting into vi
-#paste function:
+note: so that no extra spaces are added when pasting into vi
+note: paste function:
 '''
 import json
 from opa_wasm import OPAPolicy
@@ -37,18 +37,19 @@ def lambda_handler(event, context):
             'body': json.dumps(f"Error: {str(e)}")
         }
 '''
-#Press ESC, then :wq to write and quit vim
+note: Press ESC, then :wq to write and quit vim
 pip install wasmer -t .
 pip install wasmer_compiler_cranelift -t .
 pip install wasmer_compiler_llvm -t .
 pip install opa_wasm -t .
-aws s3 cp s3://gdms-poc-toolkit1/input_object.json .
-aws s3 cp s3://gdms-poc-toolkit1/data.json .
-aws s3 cp s3://gdms-poc-toolkit1/policy.wasm .
+aws s3 cp s3://BUCKET_NAME/input_object.json .
+aws s3 cp s3://BUCKET_NAME/data.json .
+aws s3 cp s3://BUCKET_NAME/policy.wasm .
 zip -r ../lambda_opa_py_package.zip .
 cd .. 
 chmod +x lambda_opa_py_package.zip
 aws s3 cp lambda_opa_py_package.zip s3://BUCKET_NAME
+
 
 Script to build .wasm file from .rego ruleset:
 
