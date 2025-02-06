@@ -54,3 +54,15 @@ aws s3 cp lambda_opa_py_package.zip s3://BUCKET_NAME
 Script to build .wasm file from .rego ruleset:
 
 opa build -t wasm -e test/main policy.rego -o policy.tar.gz
+
+
+Script to build lambda layer with opa and wasm capabilities:
+
+mkdir -p python/lib/python3.9/site-packages
+cd python/lib/python3.9/site-packages
+pip install wasmer -t .
+pip install wasmer_compiler_cranelift -t .
+pip install wasmer_compiler_llvm -t .
+pip install opa_wasm -t .
+cd ../../../../
+zip layer_content_opa.zip python 
