@@ -7,14 +7,16 @@ def lambda_handler(event, context):
         policy = OPAPolicy('policy.wasm')
         data_file = open('data.json')
         data = json.load(data_file)
+        
         # Optional: Set policy data
         policy.set_data(data)
+        
         # load the input
         input_file = open('input_object.json')
         input = json.load(input_file)
+        
         # Evaluate the policy
         result = policy.evaluate(input)
-        # [{'result': {'rule': 'C', 'label': 'UNRESTRICTED'}}]
         print(result)
         return {
             'statusCode': 200,
